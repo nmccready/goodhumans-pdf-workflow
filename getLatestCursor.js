@@ -2,7 +2,7 @@
 
 // Require Logic
 const
-      lib    = require('lib')
+      lib    = require('./lib')
     , dotenv = require('dotenv')
 
 

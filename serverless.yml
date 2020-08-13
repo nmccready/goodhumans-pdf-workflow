@@ -62,24 +62,6 @@ functions:
     environment:
       s3BucketName: ${self:custom.s3BucketName}
 
-#  getDownloadLink:
-#    handler: handler.getDownloadLink
-#    environment:
-#      s3BucketName: ${self:custom.s3BucketName}
-#
-#  downloadFile:
-#    handler: handler.downloadFile
-#    environment:
-#      s3BucketName: ${self:custom.s3BucketName}
-#
-#  uploadFile:
-#    handler: handler.uploadFile
-#    environment:
-#      s3BucketName: ${self:custom.s3BucketName}
-#
-#  sendNofitication:
-#    handler: handler.sendNotification
-
 plugins:
   - serverless-step-functions
   - serverless-pseudo-parameters
