@@ -1,0 +1,92 @@
+org: iconify
+service: goodhumans-pdf-workflow
+custom: ${file(./yml/custom.yml)}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  profile: default
+  timeout: 10
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource: arn:aws:lambda:us-east-1::*:*
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource: "*"
+
+layers:
+  commonLibs:
+    path: layer
+    compatibleRuntimes:
+      - nodejs12.x
+
+functions:
+  single:
+    handler: single.handler
+    events:
+      - http:
+          path: single
+          method: get
+      - http:
+          path: single
+          method: post
+
+  multiCreate:
+    handler: multiCreate.handler
+    events:
+      - http:
+          path: multi/create
+          method: get
+
+  multiShow:
+    handler: multiShow.handler
+    events:
+      - http:
+          path: multi/show/{id}
+          method: get
+
+  getLatestCursor:
+    handler: getLatestCursor.handler
+    layers:
+      - {Ref: CommonLibsLambdaLayer}
+    environment:
+      s3BucketName: ${self:custom.s3BucketName}
+
+  processFileList:
+    handler: processFileList.handler
+    layers:
+      - {Ref: CommonLibsLambdaLayer}
+    environment:
+      s3BucketName: ${self:custom.s3BucketName}
+
+#  getDownloadLink:
+#    handler: handler.getDownloadLink
+#    environment:
+#      s3BucketName: ${self:custom.s3BucketName}
+#
+#  downloadFile:
+#    handler: handler.downloadFile
+#    environment:
+#      s3BucketName: ${self:custom.s3BucketName}
+#
+#  uploadFile:
+#    handler: handler.uploadFile
+#    environment:
+#      s3BucketName: ${self:custom.s3BucketName}
+#
+#  sendNofitication:
+#    handler: handler.sendNotification
+
+plugins:
+  - serverless-step-functions
+  - serverless-pseudo-parameters
+
+resources:
+  Resources:
+    storageBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.s3BucketName}

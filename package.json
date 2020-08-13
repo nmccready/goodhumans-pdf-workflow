@@ -1,0 +1,52 @@
+{
+  "name": "goodhumans-pdf-workflow",
+  "version": "0.0.1",
+  "description": "GoodHumans.co.uk PDF Merge workflow",
+  "author": "AtomicLotus.net",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/serverless/serverless-starter.git"
+  },
+  "dependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "@babel/runtime": "^7.5.5",
+    "aws-sdk": "^2.6.9",
+    "bluebird": "^3.7.2",
+    "core-js": "^3.6.5",
+    "dotenv": "^8.2.0",
+    "dropbox-v2-api": "^2.4.26",
+    "file-system": "^2.2.2",
+    "follow-redirects": "^1.12.1",
+    "lambda-api": "^0.10.6",
+    "mkdirp": "^0.5.5",
+    "node-fetch": "^2.6.0",
+    "node-uuid": "^1.4.7",
+    "path": "^0.12.7",
+    "pdf-lib": "^1.10.0",
+    "pdf-merge": "0.0.4",
+    "promisify": "0.0.3",
+    "regenerator-runtime": "^0.13.7",
+    "request": "^2.74.0",
+    "request-promise": "^4.1.1",
+    "serverless-pseudo-parameters": "^2.5.0",
+    "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "aws-lambda": "^1.0.6",
+    "aws-lambda-mock-context": "^3.0.0",
+    "babel-eslint": "^10.0.2",
+    "chai": "^3.5.0",
+    "eslint": "^4.18.2",
+    "eslint-plugin-flowtype": "^2.25.0",
+    "flow-bin": "^0.36.0",
+    "mocha": "^3.1.0",
+    "sinon": "^1.17.6",
+    "sinon-chai": "^2.9.0"
+  }
+}

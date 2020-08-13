@@ -1,0 +1,22 @@
+{
+  "name": "goodhumans-pdf-workflow-layer",
+  "version": "0.0.1",
+  "description": "Dependency layer for goodhumans-pdf-workflow",
+  "author": "AtomicLotus.net",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/serverless/serverless-starter.git"
+  },
+  "dependencies": {
+    "dropbox-v2-api": "^2.4.26",
+    "file-system": "^2.2.2",
+    "node-fetch": "^2.6.0",
+    "node-uuid": "^1.4.7",
+    "path": "^0.12.7",
+    "pdf-lib": "^1.10.0",
+    "pdf-merge": "0.0.4",
+    "uuid": "^8.3.0"
+  }
+}
