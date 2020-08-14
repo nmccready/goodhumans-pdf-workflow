@@ -1,12 +1,10 @@
 'use strict';
 
 const
-      lib    = require('./lib')
-    , dotenv     = require('dotenv')
-    // , uploadToS3 = require('./lib/functions/uploadToS3.js')
-    // , storePDF   = require('./lib/functions/storePdf.js')
-    , formatDate = require('./lib/functions/formatDate.js')
-    , saveToBucket = require('./lib/functions/saveToBucket.js')
+      lib          = require('./lib')
+    , dotenv       = require('dotenv')
+    , formatDate   = require('./lib/functions/formatDate.js')
+    , getFileList = require('./lib/functions/saveToBucket.js')
 
 dotenv.config();
 
@@ -22,7 +20,7 @@ module.exports.handler = (event, context) => {
         return context.succeed(
             lib.lambdaProxyResponse(
                 200,
-                await saveToBucket(
+                await getFileList(
                     JSON.stringify(response),
                     `${formatDate(false, true)}-cursor.json`,
                     'cursor'
@@ -31,3 +29,4 @@ module.exports.handler = (event, context) => {
         );
     });
 };
+
