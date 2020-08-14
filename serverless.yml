@@ -24,29 +24,6 @@ layers:
       - nodejs12.x
 
 functions:
-  single:
-    handler: single.handler
-    events:
-      - http:
-          path: single
-          method: get
-      - http:
-          path: single
-          method: post
-
-  multiCreate:
-    handler: multiCreate.handler
-    events:
-      - http:
-          path: multi/create
-          method: get
-
-  multiShow:
-    handler: multiShow.handler
-    events:
-      - http:
-          path: multi/show/{id}
-          method: get
 
   getLatestCursor:
     handler: getLatestCursor.handler
