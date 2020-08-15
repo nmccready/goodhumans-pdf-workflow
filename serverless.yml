@@ -11,7 +11,19 @@ provider:
     - Effect: Allow
       Action:
         - lambda:InvokeFunction
-      Resource: arn:aws:lambda:us-east-1::*:*
+      Resource:
+        - arn:aws:lambda:us-east-1::*:*
+        - arn:aws:states:us-east-1::*:*
+    - Effect: Allow
+      Action:
+        - sts:StartExecution
+      Resource:
+        - arn:aws:states:us-east-1::*:*
+    - Effect: Allow
+      Action:
+        - cloudwatch:*
+      Resource:
+        - arn:aws:cloudwatch:us-east-1::*:*
     - Effect: Allow
       Action:
         - s3:*
@@ -32,6 +44,20 @@ functions:
     environment:
       s3BucketName: ${self:custom.s3BucketName}
 
+  getStoredCursor:
+    handler: getStoredCursor.handler
+    layers:
+      - {Ref: CommonLibsLambdaLayer}
+    environment:
+      s3BucketName: ${self:custom.s3BucketName}
+
+  getFileList:
+    handler: getFileList.handler
+    layers:
+      - {Ref: CommonLibsLambdaLayer}
+    environment:
+      s3BucketName: ${self:custom.s3BucketName}
+
   processFileList:
     handler: processFileList.handler
     layers:
@@ -39,12 +65,115 @@ functions:
     environment:
       s3BucketName: ${self:custom.s3BucketName}
 
+stepFunctions:
+  stateMachines:
+
+    getLatestCursor:
+      name: sfGetLatestCursor
+      definition:
+        Comment: "Get the latest cursor"
+        StartAt: GetLatestCursor
+        States:
+
+          GetLatestCursor:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [getLatestCursor, Arn]
+            Catch:
+            - ErrorEquals: [States.ALL]
+              ResultPath: "$.error"
+              Next: SendCursorErrorMessage
+            End: true
+
+          SendCursorErrorMessage:
+            Type: Task
+            Resource:
+              arn:aws:states:::sns:publish
+            Parameters:
+              Subject: "Get Latest Token Error"
+              Message:
+                - Input.$ : "$.error"
+              TopicArn:
+                !Join [":", ["arn:aws:sns", !Ref "AWS::Region", !Ref "AWS::AccountId", "ErrorMessages"]]
+            Next: EndCursorProcess
+
+          EndCursorProcess:
+            Type: Pass
+            End: true
+
+    mergeFileList:
+      name: sfMergeFileList
+      definition:
+        Comment: "Get the stored cursor"
+        StartAt: GetStoredCursor
+        States:
+
+          GetStoredCursor:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [getStoredCursor, Arn]
+            Catch:
+            - ErrorEquals : [States.ALL]
+              ResultPath  : $.error
+              Next        : SendErrorMessage
+            Next : GetFileList
+
+          GetFileList:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [getFileList, Arn]
+            Catch:
+            - ErrorEquals : [States.ALL]
+              ResultPath  : $.error
+              Next        : SendErrorMessage
+            Next : EndProcess
+
+          SendErrorMessage:
+            Type: Task
+            Resource:
+              arn:aws:states:::sns:publish
+            Parameters:
+              Subject : "Merge File List Error"
+              Message:
+                - Input.$ : "$.error"
+              TopicArn:
+                !Join [":", ["arn:aws:sns", !Ref "AWS::Region", !Ref "AWS::AccountId", "ErrorMessages"]]
+            Next: EndProcess
+
+          EndProcess:
+            Type: Pass
+            End : true
+
 plugins:
   - serverless-step-functions
   - serverless-pseudo-parameters
 
 resources:
   Resources:
+
+    TriggerGetLatestCursor:
+      Type: AWS::Events::Rule
+      Properties:
+        Name: 'Trigger-Get-Latest-Cursor'
+        Description : 'Triggers getLatestCursor step function'
+        ScheduleExpression : 'cron(0 0 * * ? *)'
+        State : 'ENABLED'
+        Targets :
+          - Arn : !Join [ ':', [ 'arn:aws:states', !Ref 'AWS::Region', !Ref 'AWS::AccountId', 'stateMachine:getLatestCursor' ]]
+            Id : TriggerGetLatestCursorStepFunction
+            RoleArn : !Join [ ':', [ 'arn:aws:iam:', !Ref 'AWS::AccountId', 'role/goodhumans-pdf-workflow-dev-SfGetLatestCursorRole-1GXNYMTHZZLNX' ] ]
+
+            # arn:aws:iam::916306042663:role/goodhumans-pdf-workflow-dev-SfGetLatestCursorRole-1GXNYMTHZZLNX
+
+    errorMessages:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: 'Error Messages'
+        TopicName: ErrorMessages
+        Subscription:
+          - Endpoint: scott@atomiclotus.net
+            Protocol: email
+
     storageBucket:
       Type: AWS::S3::Bucket
       Properties:
