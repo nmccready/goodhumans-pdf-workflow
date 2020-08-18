@@ -251,7 +251,7 @@ resources:
         ScheduleExpression : 'cron(0 2 ? * 1-5 *)'
         State : 'ENABLED'
         Targets :
-          - Arn : !Join [ ':', [ 'arn:aws:states', !Ref 'AWS::Region', !Ref 'AWS::AccountId', 'stateMachine:getLatestCursor' ]]
+          - Arn : !Join [ ':', [ 'arn:aws:states', !Ref 'AWS::Region', !Ref 'AWS::AccountId', 'stateMachine:sfGetLatestCursor' ]]
             Id : TriggerGetLatestCursorStepFunction
             RoleArn : !Join [ ':', [ 'arn:aws:iam:', !Ref 'AWS::AccountId', 'role/goodhumans-pdf-workflow-dev-SfGetLatestCursorRole-1GXNYMTHZZLNX' ] ]
 
@@ -263,7 +263,7 @@ resources:
         ScheduleExpression : 'cron(0 11 ? * 1-5 *)'
         State : 'ENABLED'
         Targets :
-          - Arn : !Join [ ':', [ 'arn:aws:states', !Ref 'AWS::Region', !Ref 'AWS::AccountId', 'stateMachine:mergeFileList' ]]
+          - Arn : !Join [ ':', [ 'arn:aws:states', !Ref 'AWS::Region', !Ref 'AWS::AccountId', 'stateMachine:sfMergeFileList' ]]
             Id : TriggerMergePdfsStepFunction
             RoleArn : !Join [ ':', [ 'arn:aws:iam:', !Ref 'AWS::AccountId', 'role/goodhumans-pdf-workflow-dev-SfMergeFileListRole-12UIYA0MAZF0R' ] ]
 
