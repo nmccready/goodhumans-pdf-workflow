@@ -248,12 +248,24 @@ resources:
       Properties:
         Name: 'Trigger-Get-Latest-Cursor'
         Description : 'Triggers getLatestCursor step function'
-        ScheduleExpression : 'cron(0 3 ? * 1-5 *)'
+        ScheduleExpression : 'cron(0 2 ? * 1-5 *)'
         State : 'ENABLED'
         Targets :
           - Arn : !Join [ ':', [ 'arn:aws:states', !Ref 'AWS::Region', !Ref 'AWS::AccountId', 'stateMachine:getLatestCursor' ]]
             Id : TriggerGetLatestCursorStepFunction
             RoleArn : !Join [ ':', [ 'arn:aws:iam:', !Ref 'AWS::AccountId', 'role/goodhumans-pdf-workflow-dev-SfGetLatestCursorRole-1GXNYMTHZZLNX' ] ]
+
+    TriggerMergePdfs:
+      Type: AWS::Events::Rule
+      Properties:
+        Name: 'Trigger-Merge-PDFs'
+        Description : 'Triggers mergePdfs step function'
+        ScheduleExpression : 'cron(0 11 ? * 1-5 *)'
+        State : 'ENABLED'
+        Targets :
+          - Arn : !Join [ ':', [ 'arn:aws:states', !Ref 'AWS::Region', !Ref 'AWS::AccountId', 'stateMachine:mergeFileList' ]]
+            Id : TriggerMergePdfsStepFunction
+            RoleArn : !Join [ ':', [ 'arn:aws:iam:', !Ref 'AWS::AccountId', 'role/goodhumans-pdf-workflow-dev-SfMergeFileListRole-12UIYA0MAZF0R' ] ]
 
     errorMessages:
       Type: AWS::SNS::Topic
