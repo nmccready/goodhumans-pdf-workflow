@@ -9,8 +9,8 @@
     "type": "git",
     "url": "https://github.com/serverless/serverless-starter.git"
   },
-  "scripts" : {
-    "deploy" : "serverless deploy"
+  "scripts": {
+    "deploy": "serverless deploy"
   },
   "dependencies": {
     "@babel/cli": "^7.5.5",
@@ -33,6 +33,7 @@
     "path": "^0.12.7",
     "pdf-lib": "^1.10.0",
     "pdf-merge": "0.0.4",
+    "pdf-merger-js": "^3.0.5",
     "promisify": "0.0.3",
     "regenerator-runtime": "^0.13.7",
     "request": "^2.74.0",
