@@ -1,7 +1,7 @@
 'use strict';
 
 const
-    lib    = require('./lib')
+    lib = require('./lib')
     , dotenv = require('dotenv')
 
 dotenv.config();

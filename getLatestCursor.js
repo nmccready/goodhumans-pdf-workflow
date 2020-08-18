@@ -3,8 +3,6 @@
 const
       lib          = require('./lib')
     , dotenv       = require('dotenv')
-    , formatDate   = require('./lib/functions/formatDate.js')
-    , saveToBucket = require('./lib/functions/saveToBucket.js')
 
 dotenv.config();
 
