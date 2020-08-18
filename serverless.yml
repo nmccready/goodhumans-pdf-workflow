@@ -92,16 +92,28 @@ stepFunctions:
             - ErrorEquals: [States.TaskFailed]
               ResultPath: "$.error"
               Next: SendCursorErrorMessage
-            End: true
+            Next : SendCursorSuccessMessage
+
+          SendCursorSuccessMessage:
+            Type: Task
+            Resource:
+              arn:aws:states:::sns:publish
+            Parameters:
+              Subject: "[SUCCESS] Saved Latest Cursor"
+              Message:
+                - Input.$ : "$"
+              TopicArn:
+                !Join [":", ["arn:aws:sns", !Ref "AWS::Region", !Ref "AWS::AccountId", "GoodHumansNotifications"]]
+            Next: EndCursorProcess
 
           SendCursorErrorMessage:
             Type: Task
             Resource:
               arn:aws:states:::sns:publish
             Parameters:
-              Subject: "Get Latest Token Error"
+              Subject: "[FAILED] Get Latest Cursor Error"
               Message:
-                - Input.$ : "$.error"
+                - Input.$: "$.error"
               TopicArn:
                 !Join [":", ["arn:aws:sns", !Ref "AWS::Region", !Ref "AWS::AccountId", "GoodHumansNotifications"]]
             Next: EndCursorProcess
@@ -191,7 +203,7 @@ stepFunctions:
               arn:aws:states:::sns:publish
             Parameters:
               Subject: "No Files to Download"
-              Message: "There are no files to download. Workflow exited."
+              Message: "[ABORTED] There are no files to download. Workflow exited."
               TopicArn:
                 !Join [":", ["arn:aws:sns", !Ref "AWS::Region", !Ref "AWS::AccountId", "GoodHumansNotifications"]]
             Next: EndProcess
@@ -201,7 +213,7 @@ stepFunctions:
             Resource:
               arn:aws:states:::sns:publish
             Parameters:
-              Subject: "PDF Merge Finished"
+              Subject: "[SUCCESS] PDF Merge Finished"
               Message:
                 - Input.$: "$"
               TopicArn:
@@ -213,7 +225,7 @@ stepFunctions:
             Resource:
               arn:aws:states:::sns:publish
             Parameters:
-              Subject : "Merge File List Error"
+              Subject : "[FAILED] Merge File List Error"
               Message:
                 - Input.$ : "$.error"
               TopicArn:
@@ -250,6 +262,8 @@ resources:
         TopicName: GoodHumansNotifications
         Subscription:
           - Endpoint: scott@atomiclotus.net
+            Protocol: email
+          - Endpoint: mike@goodhumans.co.uk
             Protocol: email
 
     storageBucket:
